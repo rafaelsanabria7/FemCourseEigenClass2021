@@ -13,6 +13,6 @@ using std::cin;
 int main ()
 {
     VecDouble vec1(2);
-  
+    std::cout << "Hello world";
     return 0;
 }
