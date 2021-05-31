@@ -21,6 +21,12 @@ using std::endl;
 using std::cin;
 
 int main (){
+    
+    GeoMesh gmesh;
+    ReadGmsh read;
+    read.Read(gmesh,"test.msh");
+    VTKGeoMesh plotmesh;
+    plotmesh.PrintGMeshVTK(&gmesh, "quads.vtk");
 
     return 0;
 }
