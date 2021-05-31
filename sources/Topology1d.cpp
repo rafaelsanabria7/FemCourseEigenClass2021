@@ -36,7 +36,7 @@ int Topology1d::SideNodeLocIndex(int side, int node)
 {
     if(side <2 && node == 0)
         return side;
-    if(side == 2 && node <2)
+    if(side == 2 && node < 2)
         return node;
     std::cout << "Topology1d::SideNodeIndex inconsistent side or node" << std::endl;
     return -1;

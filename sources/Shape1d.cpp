@@ -11,8 +11,7 @@
 #include "DataTypes.h"
 #include "Shape1d.h"
 
-void Shape1d::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixDouble &dphi){
-    
+void Shape1d::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixDouble &dphi){  
     if (orders[0] < 0 || orders[1] < 0 || orders[2] < 0) {
         std::cout << "Shape1d::Shape: Invalid dimension for arguments: order\n";
         DebugStop();
@@ -26,12 +25,28 @@ void Shape1d::Shape(const VecDouble &xi, VecInt &orders, VecDouble &phi, MatrixD
         DebugStop();
     }
     
-    auto nshape = NShapeFunctions(orders);
-    phi.resize(nshape);
-    dphi.resize(1,nshape);
-        
-    std::cout << "Please implement me\n";
-    DebugStop();
+    if(xi.size() != Dimension) DebugStop();
+    if(orders.size() != nSides) DebugStop();
+
+    int nshape = NShapeFunctions(orders);
+    int nsides = nSides;  
+    orders.resize(nSides);
+
+    double qsi; 
+    qsi = xi[0];
+
+    phi[0] = (1. - qsi) * 0.5;
+    phi[1] = (1. + qsi) * 0.5; 
+
+    dphi(0,0) = -0.5;
+    dphi(0,1) = 0.5; 
+    
+    if(orders[2] == 2){
+        phi[2] = 1. - qsi * qsi;
+        dphi(0, 2) = -2. * qsi; 
+    }
+ //   std::cout << "Please implement me\n";
+ //   DebugStop();
 }
 
 /// returns the number of shape functions associated with a side
