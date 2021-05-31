@@ -62,13 +62,13 @@ void GeomTriangle::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     int nnodes = NumNodes();
 
     if(xi.size() != Dimension) DebugStop();
-    if(x.size() != NodeCo.rows()) DebugStop();
+    if(x.size() < NodeCo.rows()) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
     
     VecDouble phi;
     MatrixDouble dphi;
-    x.resize(nrow);
-    x.setZero();
+//  x.resize(nrow);
+//  x.setZero();
     Shape(xi, phi, dphi);
 
 // This part of the code follows the same logic from GeomTetrahedron lines
@@ -83,7 +83,7 @@ void GeomTriangle::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
 void GeomTriangle::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, MatrixDouble &gradx) {
 //  std::cout << __PRETTY_FUNCTION__<< std::endl;
     if(xi.size() != Dimension) DebugStop();
-    if(x.size() != NodeCo.rows()) DebugStop();
+    if(x.size() < NodeCo.rows()) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
     
     int nrow = NodeCo.rows();
@@ -91,8 +91,8 @@ void GeomTriangle::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x
 
     gradx.resize(nrow, Dimension);
     gradx.setZero();
-    x.resize(nrow);
-    x.setZero();
+//  x.resize(nrow);
+//  x.setZero();
     
     VecDouble phi(nCorners);
     MatrixDouble dphi(Dimension, nCorners);
