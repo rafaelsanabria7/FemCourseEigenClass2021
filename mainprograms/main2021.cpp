@@ -13,6 +13,8 @@
 #include "TopologyTetrahedron.h"
 #include "DataTypes.h"
 #include "Analysis.h"
+#include "VTKGeoMesh.h"
+#include "ReadGmsh.h"
 
 using std::cout;
 using std::endl;
@@ -55,5 +57,12 @@ int main ()
     
     std::cout << "order = " << order << " integral aproximada " << Integral <<
     " erro " << 6.*M_PI-Integral << std::endl;
+    
+    GeoMesh gmesh;
+    ReadGmsh read;
+    read.Read(gmesh,"quads.msh");
+    VTKGeoMesh plotmesh;
+    plotmesh.PrintGMeshVTK(&gmesh, "quads.vtk");
+    
     return 0;
 }
