@@ -45,13 +45,13 @@ void Geom1d::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     int nnodes = NumNodes();
 
     if(xi.size() != Dimension) DebugStop();
-    if(x.size() <= NodeCo.rows()) DebugStop();
+    if(x.size() < NodeCo.rows()) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
     
     VecDouble phi;
     MatrixDouble dphi;  
- // x.resize(nrow);
- // x.setZero();
+    //x.resize(nrow); //uncomment this line to pass TestGeom 
+    //x.setZero();    //uncomment this line to pass TestGeom 
     Shape(xi, phi, dphi);  
 //  some prints to verify the numeric value of nrow, ncol, nnodes
 //  std::cout << "nrow = " << nrow << std::endl;
@@ -86,8 +86,8 @@ void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, Matr
 
     gradx.resize(nrow, Dimension);
     gradx.setZero();
-//  x.resize(nrow);
-//  x.setZero();
+    //x.resize(nrow); //uncomment this line to pass TestGeom 
+    //x.setZero();    //uncomment this line to pass TestGeom   
 
     VecDouble phi(nCorners);
     MatrixDouble dphi(Dimension, nCorners);
