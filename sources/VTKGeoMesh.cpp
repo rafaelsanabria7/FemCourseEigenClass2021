@@ -279,7 +279,7 @@ void VTKGeoMesh::PrintCMeshVTK(CompMesh *cmesh, int dim, const std::string &file
             VecDouble sol(1), dsol(2);
             cel->Solution(xi, 1, sol);
             cel->Solution(xi, 2, dsol);
-//            if(dsol.rows() > 0 && abs(dsol[0]) != 0.)
+//          if(dsol.rows() > 0 && abs(dsol[0]) != 0.)
 //            {
 //                std::cout << "dsol " << dsol[0] << std::endl;
 //            }

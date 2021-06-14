@@ -27,9 +27,9 @@ int main (){
     
     GeoMesh gmesh;
     ReadGmsh read;
-    read.Read(gmesh,"1element_test.msh");
+    read.Read(gmesh,"1element.msh");
     VTKGeoMesh plotmesh;
-    plotmesh.PrintGMeshVTK(&gmesh, "1element_test.vtk");
+    plotmesh.PrintGMeshVTK(&gmesh, "1element.vtk");
     
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(2,2);
@@ -41,20 +41,12 @@ int main (){
     proj.setZero();
     val1.setZero();
     val2.setZero();
-
-     L2Projection *bc_line_bottom = new L2Projection(0,2,proj,val1,val2);
-     //L2Projection *bc_line_right = new L2Projection(0,3,proj,val1,val2);
-     //L2Projection *bc_line_top = new L2Projection(0,4,proj,val1,val2);
-     //L2Projection *bc_line_left = new L2Projection(0,5,proj,val1,val2);
-     L2Projection *bc_point = new L2Projection(0,6,proj,val1,val2);
-     std::vector<MathStatement *> mathvec(7);
-    
-    mathvec[1] = mat1;
-    mathvec[2] = bc_line_bottom;
-    //mathvec[3] = bc_line_right;
-    //mathvec[4] = bc_line_top;
-    //mathvec[5] = bc_line_left;
-    mathvec[6] = bc_point;
+    L2Projection *bc_line_bottom = new L2Projection(0,2,proj,val1,val2);
+    L2Projection *bc_line_right = new L2Projection(0,3,proj,val1,val2);
+    L2Projection *bc_line_top = new L2Projection(0,4,proj,val1,val2);
+    L2Projection *bc_line_left = new L2Projection(0,5,proj,val1,val2);
+    L2Projection *bc_point = new L2Projection(0,6,proj,val1,val2);
+    std::vector<MathStatement *> mathvec = {0,mat1,bc_line_bottom,bc_line_right,bc_line_top,bc_line_left,bc_point};
     cmesh.SetMathVec(mathvec);
 
     cmesh.AutoBuild();
@@ -62,6 +54,9 @@ int main (){
     cmesh.Solution() (0,0) = 1.;
 
     plotmesh.PrintCMeshVTK(&cmesh,2, "c_mesh_1element.vtk");
+
+//  Analysis Analysis(&cmesh);
+//  Analysis.RunSimulation();
 
     return 0;
 }

@@ -138,26 +138,31 @@ void L2Projection::PostProcessSolution(const IntPointData &data, const int var, 
         case 0: //None
         {
             std::cout << " Var index not implemented " << std::endl;
+            return;
             DebugStop();
         }
 
         case 1: //ESol
         {
-            Solout.resize(nstate);
-            for (int i = 0; i < nstate; i++){
-                Solout[i] = sol[i];
-            }
+            return;
+            DebugStop();
+           // Solout.resize(nstate);
+           // for (int i = 0; i < nstate; i++){
+           //     Solout[i] = sol[i];
+           // }
         } 
 
         case 2: //EDSol
         {   
-            Solout.resize(rows * cols);
-            for (int i = 0; i < rows; i++){
-                for (int j = 0; j < cols; j++){
-                    Solout[i * cols + j] = gradu(i, j);
-                }
+            return;
+            DebugStop();
+            //Solout.resize(rows * cols);
+            //for (int i = 0; i < rows; i++){
+            //    for (int j = 0; j < cols; j++){
+            //        Solout[i * cols + j] = gradu(i, j);
+            //    }
                 
-            }
+            //}
         }
         break;
         default:
