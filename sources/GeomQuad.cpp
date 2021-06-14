@@ -65,8 +65,12 @@ void GeomQuad::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     
     VecDouble phi(nCorners);
     MatrixDouble dphi(Dimension, nCorners);
-    //x.resize(nrow);
-    //x.setZero();
+    
+    if (x.size() < nrow){
+        x.resize(nrow);
+    }
+    x.setZero();
+    
     Shape(xi, phi, dphi);
 // This part of the code follows the same logic from GeomTetrahedron lines
     for (int i = 0; i < Dimension; i++) {
@@ -91,8 +95,11 @@ void GeomQuad::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, Ma
 
     gradx.resize(nrow, Dimension);
     gradx.setZero();
-    //x.resize(nrow);
-    //x.setZero();
+
+    if (x.size() < nrow){
+        x.resize(nrow);
+    }
+    x.setZero();
 
     VecDouble phi(nCorners);
     MatrixDouble dphi(Dimension, nCorners);

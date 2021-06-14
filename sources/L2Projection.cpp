@@ -131,39 +131,41 @@ void L2Projection::PostProcessSolution(const IntPointData &data, const int var, 
     int rows = data.dsoldx.rows();
     int cols = data.dsoldx.cols();
     MatrixDouble gradu(rows, cols);
-    gradu = data.dsoldx;
+    gradu = data.dsoldx;  
 
-    int nstate = this->NState();
-
-    switch (var) {
+    int nstate = this->NState(); 
+        switch (var) {
         case 0: //None
         {
             std::cout << " Var index not implemented " << std::endl;
             DebugStop();
         }
+
         case 1: //ESol
         {
-            //+++++++++++++++++
-            // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            DebugStop();
-            //+++++++++++++++++
-        }
-            break;
+            Solout.resize(nstate);
+            for (int i = 0; i < nstate; i++){
+                Solout[i] = sol[i];
+            }
+        } 
 
         case 2: //EDSol
-        {
-            //+++++++++++++++++
-            // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            DebugStop();
-            //+++++++++++++++++
+        {   
+            Solout.resize(rows * cols);
+            for (int i = 0; i < rows; i++){
+                for (int j = 0; j < cols; j++){
+                    Solout[i * cols + j] = gradu(i, j);
+                }
+                
+            }
         }
-            break;
+        break;
         default:
         {
-            std::cout << " Var index not implemented " << std::endl;
+            std::cout << "Var index not implemented " << std::endl;
             DebugStop();
         }
+        
     }
+
 }
