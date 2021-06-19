@@ -5,9 +5,10 @@
  */
 
 #include "Poisson.h"
-#include "PostProcess.h"
+///\cond
 #include <functional>
 #include <string.h>
+///\endcond
 
 Poisson::Poisson() {
 }
@@ -120,10 +121,14 @@ void Poisson::ContributeError(IntPointData &data, VecDouble &u_exact, MatrixDoub
 }
 
 void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, MatrixDouble &EF) const {
+
     VecDouble phi = data.phi;
     MatrixDouble dphi = data.dphidx;
     MatrixDouble axes = data.axes;
     MatrixDouble dphi2, dphi3;
+
+    dphi2 = data.axes.transpose()*data.dphidx;
+    dphi3 = dphi2.transpose();
 
     this->Axes2XYZ(dphi, dphi2, axes);
     dphi3 = dphi2.transpose();
@@ -137,11 +142,12 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
 
     perm = this->GetPermeability();
     force = this->GetForceFunction();
-
     VecDouble res(nstate);
     if(force)
     {
-        force(data.x, res);
+        VecDouble resloc(1);
+        force(data.x, resloc);
+        // res = resloc[0];
     }
     else 
     {
@@ -181,6 +187,7 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
     int cols = data.dsoldx.cols();
     MatrixDouble gradu(rows, cols);
     gradu = data.dsoldx;
+    
     int nstate = this->NState();
 
     switch (var) {

@@ -5,9 +5,8 @@
  */
 
 #include "L2Projection.h"
-#include "PostProcess.h"
-#include "tpanic.h"
 #include <string.h>
+
 
 L2Projection::L2Projection() {
 }
@@ -56,18 +55,34 @@ void L2Projection::SetProjectionMatrix(const MatrixDouble &proj) {
 }
 
 void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &EK, MatrixDouble &EF) const {
+
     int nstate = this->NState();
-    int nshape = data.phi.size();
+    if(nstate != 1)
+    {
+        std::cout << "Please implement me\n";
+        DebugStop();
+    }
+    auto nshape = data.phi.size();
+    if(EK.rows() != nshape || EF.rows() != nshape)
+    {
+        DebugStop();
+    }
 
-    VecDouble result(data.x.size());
-    MatrixDouble deriv(data.x.size(), data.x.size());
-
-    SolutionExact(data.x, result, deriv);
+    VecDouble result(nstate);
+    result[0] = Val2()(0,0);
+    MatrixDouble deriv(data.x.size(), nstate);
+    deriv.setZero();
+    
+    if(SolutionExact)
+    {
+        SolutionExact(data.x, result, deriv);
+    }
 
     //+++++++++++++++++
     // Please implement me
     std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
     DebugStop();
+
     switch (this->GetBCType()) {
 
         case 0:
@@ -141,7 +156,6 @@ void L2Projection::PostProcessSolution(const IntPointData &data, const int var, 
             return;
             DebugStop();
         }
-        break;
         case 1: //ESol
         {
             Solout.resize(nstate);
@@ -159,7 +173,8 @@ void L2Projection::PostProcessSolution(const IntPointData &data, const int var, 
             }               
          }
         }
-        break;
+            break;
+
         default:
         {
             std::cout << "Var index not implemented " << std::endl;
