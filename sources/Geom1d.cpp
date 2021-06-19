@@ -86,13 +86,15 @@ void Geom1d::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, Matr
     int nrow = NodeCo.rows();
     int ncol = NodeCo.cols();
 
-    //gradx.resize(nrow, Dimension);
+    if(gradx.rows() < nrow || gradx.cols() < Dimension){
+        gradx.resize(nrow, Dimension);
+    }   
     gradx.setZero();
     if (x.size() < nrow){
         x.resize(nrow);
     }
-    x.setZero(); 
 
+    x.setZero(); 
     VecDouble phi(nCorners);
     MatrixDouble dphi(Dimension, nCorners);
     Shape(xi, phi, dphi);

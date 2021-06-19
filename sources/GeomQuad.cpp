@@ -93,7 +93,9 @@ void GeomQuad::GradX(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x, Ma
     int nrow = NodeCo.rows();
     int ncol = NodeCo.cols(); 
 
-    gradx.resize(nrow, Dimension);
+    if(gradx.rows() < nrow || gradx.cols() < Dimension){
+        gradx.resize(nrow, Dimension);
+    }   
     gradx.setZero();
 
     if (x.size() < nrow){

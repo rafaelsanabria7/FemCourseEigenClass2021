@@ -143,12 +143,34 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
     {
         force(data.x, res);
     }
-
-
+    else 
+    {
+        DebugStop();
+    }
+    // computing load vector (contribution from integration point)
+    for(int i =0; i < nshape * nstate; i++)
+    {
+        EF(i,0) += res[0]*data.weight*data.phi[i];
+    }
+    // computing element stiffness matrix (contribution from integration point)
+    for(int i =0; i < nshape * nstate; i++)
+    {   
+        // gradphi as a function of x
+        MatrixDouble gradphii = dphi2.col(i);
+        // permiability times gradphi as a function of x
+        MatrixDouble  flux(3,1); 
+        flux = perm * gradphii;
+        for(int j =0; j < nshape * nstate; j++)
+        {
+            MatrixDouble gradphij = dphi2.col(j);
+            // variational formulation for Poisson problem
+            EK(i,j) += data.weight * Inner (flux,gradphij) * data.detjac; 
+        }
+    }
     //+++++++++++++++++
     // Please implement me
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
+    //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
+    //DebugStop();
     //+++++++++++++++++
 }
 
@@ -167,26 +189,25 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
             std::cout << " Var index not implemented " << std::endl;
             DebugStop();
         }
-
+        break;
         case 1: //ESol
         {
-            //+++++++++++++++++
-            // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return;
-            DebugStop();
-            //+++++++++++++++++
+            Solout.resize(nstate);
+            for (int i = 0; i < nstate; i++){
+                Solout[i] = sol[i];
+            }
+       
         }
             break;
 
         case 2: //EDSol
         {
-            //+++++++++++++++++
-            // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return;
-            DebugStop();
-            //+++++++++++++++++
+            Solout.resize(rows * cols);
+            for (int i = 0; i < rows; i++){
+            for (int j = 0; j < cols; j++){
+            Solout[i * cols + j] = gradu(i, j);
+            }
+            }
         }
             break;
         case 3: //EFlux

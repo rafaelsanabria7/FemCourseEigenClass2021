@@ -178,10 +178,23 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
     ek.setZero();
     ef.setZero();
 
+    IntRule* quadratura = GetIntRule();
+    int NPoints = quadratura->NPoints();
+    IntPointData point_data;
+    InitializeIntPointData(point_data);
+
+    for (int p = 0; p < NPoints; p++){
+        quadratura->Point(p, point_data.ksi, point_data.weight);
+        ComputeRequiredData(point_data, point_data.ksi);
+        material->Contribute(point_data, point_data.weight, ek, ef); 
+
+    }
+    delete quadratura;
+    std::cout << '\n' << ek << std::endl;  
     //+++++++++++++++++
     // Please implement me
-    std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-    DebugStop();
+    //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
+    //DebugStop();
     //+++++++++++++++++
 }
 
@@ -239,7 +252,8 @@ void CompElement::Solution(VecDouble &intpoint, int var, VecDouble &sol) const {
     MathStatement * material = this->GetStatement();
     if (!material) {
         std::cout << "No material for this element\n";
-        return;
+        
+        //return;
     }
 
     IntPointData data;

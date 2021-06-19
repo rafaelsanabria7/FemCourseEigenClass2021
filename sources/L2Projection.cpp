@@ -141,28 +141,23 @@ void L2Projection::PostProcessSolution(const IntPointData &data, const int var, 
             return;
             DebugStop();
         }
-
+        break;
         case 1: //ESol
         {
-            return;
-            DebugStop();
-           // Solout.resize(nstate);
-           // for (int i = 0; i < nstate; i++){
-           //     Solout[i] = sol[i];
-           // }
+            Solout.resize(nstate);
+            for (int i = 0; i < nstate; i++){
+                Solout[i] = sol[i];
+            }
         } 
-
+        break;
         case 2: //EDSol
         {   
-            return;
-            DebugStop();
-            //Solout.resize(rows * cols);
-            //for (int i = 0; i < rows; i++){
-            //    for (int j = 0; j < cols; j++){
-            //        Solout[i * cols + j] = gradu(i, j);
-            //    }
-                
-            //}
+            Solout.resize(rows * cols);
+            for (int i = 0; i < rows; i++){
+            for (int j = 0; j < cols; j++){
+                   Solout[i * cols + j] = gradu(i, j);
+            }               
+         }
         }
         break;
         default:
