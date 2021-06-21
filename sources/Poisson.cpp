@@ -122,8 +122,8 @@ void Poisson::ContributeError(IntPointData &data, VecDouble &u_exact, MatrixDoub
 
 void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, MatrixDouble &EF) const {
 
-    VecDouble phi = data.phi;
-    MatrixDouble dphi = data.dphidx;
+    VecDouble phi = data.phi;  
+    MatrixDouble dphi = data.dphidx; // derivates with respect XYZ axes
     MatrixDouble axes = data.axes;
     MatrixDouble dphi2, dphi3;
 
@@ -131,8 +131,7 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
     dphi3 = dphi2.transpose();
 
     this->Axes2XYZ(dphi, dphi2, axes);
-    dphi3 = dphi2.transpose();
-
+    
     int nshape = phi.size();
     int nstate = this->NState();
     int dim = dphi.rows();
@@ -142,21 +141,25 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
 
     perm = this->GetPermeability();
     force = this->GetForceFunction();
-    VecDouble res(nstate);
+    //  VecDouble res(nstate);
+    double res = 0.;
     if(force)
     {
         VecDouble resloc(1);
         force(data.x, resloc);
-        // res = resloc[0];
+        res = resloc[0];
     }
     else 
     {
-        DebugStop();
+        //DebugStop();
     }
+    // computing load vector (contribution from integration point)
+    //EF += phi*(res*weight);
+    //EK += dphi3*perm*(dphi2*weight);
     // computing load vector (contribution from integration point)
     for(int i =0; i < nshape * nstate; i++)
     {
-        EF(i,0) += res[0]*data.weight*data.phi[i];
+        EF(i,0) += res * data.weight* data.phi[i];
     }
     // computing element stiffness matrix (contribution from integration point)
     for(int i =0; i < nshape * nstate; i++)
