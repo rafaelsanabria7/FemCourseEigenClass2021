@@ -156,7 +156,8 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
     // computing load vector (contribution from integration point)
     //EF += phi*(res*weight);
     //EK += dphi3*perm*(dphi2*weight);
-    // computing load vector (contribution from integration point)
+
+        // computing load vector (contribution from integration point)
     for(int i =0; i < nshape * nstate; i++)
     {
         EF(i,0) += res * data.weight* data.phi[i];
@@ -176,6 +177,8 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
             EK(i,j) += data.weight * Inner (flux,gradphij) * data.detjac; 
         }
     }
+
+
     //+++++++++++++++++
     // Please implement me
     //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;

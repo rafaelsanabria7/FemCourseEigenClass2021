@@ -62,10 +62,11 @@ void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &E
         std::cout << "Please implement me\n";
         DebugStop();
     }
+    
     auto nshape = data.phi.size();
+     
     if(EK.rows() != nshape || EF.rows() != nshape)
     {
-        std::cout << "\nFLAG!\n" << __PRETTY_FUNCTION__ << std::endl;
         DebugStop();
     }
 
@@ -90,17 +91,20 @@ void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &E
 
         case 0:
         {
-            EF += (MathStatement::gBigNumber * result(0) * weight) * data.phi;
+            EF += (MathStatement::gBigNumber*result(0)*weight)*data.phi;
             EK += (MathStatement::gBigNumber*weight)* data.phi * data.phi.transpose();
+            
+            
             break;
         }
 
         case 1:
-        {
-            for (int i = 0; i < nshape; i++)
-            {
-                EF(nstate*i,0) += result(0)*data.phi(i)*weight; 
-            }
+        {  
+            for(auto iv = 0; iv < nstate; iv++){
+                for(auto in = 0; in < nshape; in++){
+                    EF(nstate*in+iv,0) += (result[iv]*weight)*data.phi(in);
+                } 
+            } 
             break;
         }
 
