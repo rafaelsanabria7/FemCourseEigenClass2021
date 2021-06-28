@@ -64,10 +64,10 @@ void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &E
     }
     
     auto nshape = data.phi.size();
-     
+    
     if(EK.rows() != nshape || EF.rows() != nshape)
     {
-        DebugStop();
+       DebugStop();
     }
 
     VecDouble result(nstate);
@@ -91,7 +91,7 @@ void L2Projection::Contribute(IntPointData &data, double weight, MatrixDouble &E
 
         case 0:
         {
-            EF += (MathStatement::gBigNumber*result(0)*weight)*data.phi;
+            EF += (MathStatement::gBigNumber*result[0]*weight)*data.phi;
             EK += (MathStatement::gBigNumber*weight)* data.phi * data.phi.transpose();
             
             

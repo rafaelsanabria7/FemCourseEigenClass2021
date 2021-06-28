@@ -68,8 +68,30 @@ void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
         cel->CalcStiff(ek, ef);
         
         //+++++++++++++++++
-        std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-        DebugStop();
+        //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
+        //DebugStop();
         //+++++++++++++++++
+        auto ndof = cel->NDOF();
+        VecInt iglob(ndof);
+        int ni = 0;
+        for (auto i = 0; i < ndof; i++){
+            auto dofindex = cel->GetDOFIndex(i);
+            const DOF &dof = cmesh->GetDOF(dofindex);
+            for (auto j = 0; j < dof.GetNShape() * dof.GetNShape(); j++){
+                iglob[ni] = dof.GetFirstEquation() + j;
+                ni++;
+            }
+        }
+
+        for (auto i = 0; i < ek.rows(); i++){
+            auto IG = iglob[i];
+            rhs(IG,0) += ef(i,0);
+
+            for (auto j = 0; j < ek.rows(); j++){
+                auto JG = iglob[j];
+                globmat(IG, JG) += ek(i,j); 
+            } 
+        }
+
     }
 }

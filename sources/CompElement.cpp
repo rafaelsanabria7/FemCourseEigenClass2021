@@ -178,8 +178,8 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
     int nshape = NShapeFunctions();
     int nstate = material->NState();
     ek.resize(nstate * nshape, nstate * nshape);
-    ek.resize(nstate * nshape, 1);
-    
+    ef.resize(nstate * nshape, 1);
+
     // Second, you should clear the matrices you're going to compute
     ek.setZero();
     ef.setZero();

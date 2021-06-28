@@ -35,9 +35,9 @@ using std::cin;
 int main (){  
     GeoMesh gmesh;
     ReadGmsh read;
-    read.Read(gmesh,"quads.msh");
+    read.Read(gmesh,"triangle.msh");
     VTKGeoMesh plotmesh;
-    plotmesh.PrintGMeshVTK(&gmesh, "quads.vtk");
+    plotmesh.PrintGMeshVTK(&gmesh, "triangle.vtk");
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
     perm.setZero();
@@ -66,29 +66,35 @@ for(auto cel:cmesh.GetElementVec())
         auto gel = cel->GetGeoElement();
         auto nnodes = gel->NNodes();
         VecInt nodeindices;
-        //IOFormat CommaInitFmt(StreamPrecision, DontAlignCols, ", ", ", ", "", ""," ", "");
-        //IOFormat HeavyFmt(FullPrecision, 0, ", ", "\n", "{", "}","{","}");
+        IOFormat CommaInitFmt(StreamPrecision, DontAlignCols, ", ", ", ", "", ""," ", "");
+        IOFormat HeavyFmt(FullPrecision, 0, ", ", "\n", "{", "}","{","}");
         gel->GetNodes(nodeindices);
         std::cout << "element index" << cel->GetIndex() << std::endl;
         std::cout << "coord = {";
         for (auto in = 0; in < nnodes; in++)
         {
             GeoNode &node = gmesh.Node(nodeindices[in]);
-        //    std::cout << "{" << node.Co().format(CommaInitFmt) << "}";
+            std::cout << "{" << node.Co().format(CommaInitFmt) << "}";
             if(in < nnodes - 1) std::cout << ",";
         }
         std::cout << "};\n";
         cel ->CalcStiff(ek,ef);
-        //std::cout <<"ek = " << ek.format(HeavyFmt) << ";\n";
-        //std::cout <<"ef = " << ef.format(HeavyFmt) << ";\n";
+        std::cout <<"ek = " << ek.format(HeavyFmt) << ";\n";
+        std::cout <<"ef = " << ef.format(HeavyFmt) << ";\n";
     }
 
-
+    Assemble assemble(&cmesh);
+    auto neq = assemble.NEquations();
+    MatrixDouble globmat(neq,neq),rhs(neq,1);
+    assemble.Compute(globmat,rhs);
 
     cmesh.Solution() (0,0) = 1.;
     CompElement* cel = cmesh.GetElement(0);
-    plotmesh.PrintCMeshVTK(&cmesh,2, "c_quads.vtk");
+    plotmesh.PrintCMeshVTK(&cmesh,2, "c_triangle.vtk");
     
+
+
+
     //  Analysis Analysis(&cmesh);
     //  Analysis.RunSimulation();
 
