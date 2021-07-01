@@ -26,6 +26,9 @@ target_link_libraries (TestOneDProblem course_library Eigen3::Eigen)
 add_executable(TestTwoDProblem TestTwoDProblem.cpp)
 target_link_libraries (TestTwoDProblem course_library Eigen3::Eigen)
 
+add_executable(PostProcess mainPostProcess.cpp ${SOURCES})
+target_link_libraries (PostProcess course_library Eigen3::Eigen)
+
 # Mac OS X specific code
 if (APPLE)
   target_compile_definitions(TestOneDProblem PRIVATE MACOSX)

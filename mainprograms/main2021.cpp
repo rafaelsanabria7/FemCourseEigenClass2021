@@ -20,6 +20,8 @@
 #include "CompElement.h"
 #include "GeoElement.h"
 #include "Assemble.h"
+#include "PostProcessTemplate.h"
+#include "PostProcess.h"
 
 using std::cout;
 using std::endl;

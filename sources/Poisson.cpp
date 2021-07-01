@@ -69,7 +69,7 @@ Poisson::PostProcVar Poisson::VariableIndex(const std::string &name) {
     if (!strcmp("SolExact", name.c_str())) return ESolExact;
     if (!strcmp("DSolExact", name.c_str())) return EDSolExact;
     else {
-        std::cout << "variable not implemented" << std::endl;
+        std::cout << "variable "<< name <<" not implemented" << std::endl;
     }
     // Code should not reach this point. This return is only here to stop compiler warnings.
     DebugStop();
@@ -194,6 +194,10 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
     int cols = data.dsoldx.cols();
     MatrixDouble gradu(rows, cols);
     gradu = data.dsoldx;
+
+    MatrixDouble gradudx, flux;
+    gradudx = data.axes.transpose()*data.dsoldx;
+    flux = -permeability*gradudx;
     
     int nstate = this->NState();
 
@@ -228,21 +232,30 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
         {
             //+++++++++++++++++
             // Please implement me
-            std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return;
-            DebugStop();
+            //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
+            //return;
+            //DebugStop();
             //+++++++++++++++++
+            Solout.resize(3);
+            for(int i = 0; i < 3; i++){
+                Solout[i] = flux(i,0);
+            }
+
+
         }
             break;
 
         case 4: //EForce
         {
+            //Solout.resize(nstate);
+            //VecDouble result(nstate);
+            //this->forceFunction(data.x, result);
+            //for (int i = 0; i < nstate; i++) {
+            //    Solout[i] = result[i];
+            //}
             Solout.resize(nstate);
-            VecDouble result(nstate);
-            this->forceFunction(data.x, result);
-            for (int i = 0; i < nstate; i++) {
-                Solout[i] = result[i];
-            }
+            if(forceFunction) this->forceFunction(data.x, Solout);
+            else Solout.setZero();
         }
             break;
 
@@ -261,6 +274,7 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
             //+++++++++++++++++
             // Please implement me
             std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
+            return;
             DebugStop();
             //+++++++++++++++++
         }
