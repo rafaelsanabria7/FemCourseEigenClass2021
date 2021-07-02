@@ -66,22 +66,23 @@ void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
         ef.setZero();
 
         cel->CalcStiff(ek, ef);
-        
         //+++++++++++++++++
         //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
         //DebugStop();
         //+++++++++++++++++
         auto ndof = cel->NDOF();
+        std::cout << '\n' << ndof << std::endl; 
         VecInt iglob(ndof);
         int ni = 0;
         for (auto i = 0; i < ndof; i++){
             auto dofindex = cel->GetDOFIndex(i);
-            const DOF &dof = cmesh->GetDOF(dofindex);
+            DOF &dof = cmesh->GetDOF(dofindex);
             for (auto j = 0; j < dof.GetNShape() * dof.GetNShape(); j++){
                 iglob[ni] = dof.GetFirstEquation() + j;
-                ni++;
+                ni++;              
             }
         }
+        std::cout << '\n' << iglob << std::endl; 
 
         for (auto i = 0; i < ek.rows(); i++){
             auto IG = iglob[i];
@@ -91,7 +92,13 @@ void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
                 auto JG = iglob[j];
                 globmat(IG, JG) += ek(i,j); 
             } 
+                
         }
-
+        
+        std::cout << '\n' << globmat << std::endl;  
+        std::cout << '\n' << rhs << std::endl;
     }
+
 }
+
+

@@ -141,9 +141,10 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
     std::function<void(const VecDouble &co, VecDouble & result) > force;
 
     perm = this->GetPermeability();
-    force = this->GetForceFunction();
+    
     //  VecDouble res(nstate);
     double res = 0.;
+    force = this->GetForceFunction();
     if(force)
     {
         VecDouble resloc(1);
@@ -178,8 +179,6 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
             EK(i,j) += data.weight * Inner (flux,gradphij) * data.detjac; 
         }
     }
-
-
     //+++++++++++++++++
     // Please implement me
     //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
@@ -264,7 +263,7 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
             //+++++++++++++++++
             // Please implement me
             std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return;
+            //return;
             DebugStop();
             //+++++++++++++++++
         }
@@ -274,7 +273,7 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
             //+++++++++++++++++
             // Please implement me
             std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            return;
+            //return;
             DebugStop();
             //+++++++++++++++++
         }

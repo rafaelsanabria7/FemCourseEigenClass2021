@@ -28,6 +28,7 @@
 #include "IntRule.h"
 #include "PostProcessTemplate.h"
 #include "Poisson.h"
+#include "VTKGeoMesh.h"
 
 using std::cout;
 using std::endl;
@@ -43,8 +44,9 @@ int main ()
 #ifdef MACOSX
     filename = "../"+filename;
 #endif
-    read.Read(gmesh,filename);
-
+    read.Read(gmesh,"oneD.msh");
+    VTKGeoMesh plotmesh;
+    plotmesh.PrintGMeshVTK(&gmesh, "oneD.vtk");
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
     perm.setZero();
@@ -67,35 +69,46 @@ int main ()
     L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
     std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(2);
+    cmesh.SetDefaultOrder(1);
     cmesh.AutoBuild();
     cmesh.Resequence();
 
-    
-    
     Analysis Analysis(&cmesh);
     Analysis.RunSimulation();
     
     PostProcessTemplate<Poisson> postprocess;
-    postprocess.SetExact(exact);
+  
+    postprocess.AppendVariable("Sol");
+    postprocess.AppendVariable("DSol");
+    postprocess.AppendVariable("Flux");
+    postprocess.AppendVariable("Force");
+    postprocess.AppendVariable("SolExact");
+    postprocess.AppendVariable("DSolExact");
     
+    postprocess.SetExact(exact);
+    mat1->SetExactSolution(exact);
+//  Analysis.PostProcessSolution("quads.vtk",postprocess);
+
     VecDouble errvec;
     errvec = Analysis.PostProcessError(std::cout, postprocess);
-    
+
+    cmesh.Solution() (0,0) = 1.;
+    CompElement* cel = cmesh.GetElement(0);
+    plotmesh.PrintCMeshVTK(&cmesh,2, "c_oneD.vtk");
     
     return 0;
 }
 void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv){
 
-    deriv(0,0) = 4-point[0];
-    val[0]=point[0]*(8.-point[0])/2.;
+    deriv(0,0) = 4 - point[0];
+    val[0] = point[0]*(8.+ point[0])/2.;
     return;
-    double E=exp(1.0);
-    VecDouble x(1);
-    x[0]=point[0];
-    
-    val[0]=(30. + 100.*pow(E,100.) - 130.*pow(E,10.*x[0]) - 3*x[0] + 3*pow(E,100.)*x[0])/(10.*(-1. + pow(E,100.)));
-    deriv(0,0)=(-3. + 3*pow(E,100) - 1300*pow(E,10*x[0]))/(10.*(-1 + pow(E,100)));
+
+   // double E = exp(1.0);
+   // VecDouble x(1);
+   // x[0] = point[0];
+   // val[0]=(30. + 100.*pow(E,100.) - 130.*pow(E,10.*x[0]) - 3*x[0] + 3*pow(E,100.)*x[0])/(10.*(-1. + pow(E,100.)));
+   // deriv(0,0)=(-3. + 3*pow(E,100) - 1300*pow(E,10*x[0]))/(10.*(-1 + pow(E,100)));
 }
 
 

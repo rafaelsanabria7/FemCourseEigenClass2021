@@ -81,7 +81,7 @@ public:
     virtual int NEvalErrors() const;
     
     int Dimension() const {
-        return 2;
+         return 1;
     }
     
     

@@ -200,7 +200,7 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
     
     std::cout << '\n' << ek << std::endl; 
     std::cout << '\n' << ef << std::endl; 
-
+    
     //+++++++++++++++++
     // Please implement me
     //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
