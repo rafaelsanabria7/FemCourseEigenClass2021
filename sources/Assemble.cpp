@@ -71,7 +71,6 @@ void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
         //DebugStop();
         //+++++++++++++++++
         auto ndof = cel->NDOF();
-        std::cout << '\n' << ndof << std::endl; 
         VecInt iglob(ndof);
         int ni = 0;
         for (auto i = 0; i < ndof; i++){
@@ -82,7 +81,6 @@ void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
                 ni++;              
             }
         }
-        std::cout << '\n' << iglob << std::endl; 
 
         for (auto i = 0; i < ek.rows(); i++){
             auto IG = iglob[i];
@@ -95,10 +93,10 @@ void Assemble::Compute(MatrixDouble &globmat, MatrixDouble &rhs) {
                 
         }
         
-        std::cout << '\n' << globmat << std::endl;  
-        std::cout << '\n' << rhs << std::endl;
     }
-
+    //std::cout << '\n' << rhs << std::endl;
+    //std::cout << '\n' << globmat << std::endl;  
+    
 }
 
 

@@ -239,7 +239,7 @@ void VTKGeoMesh::PrintGMeshVTK(GeoMesh * gmesh, const std::string &filename)
 
 
 /// Generate an output file for the solution and its gradient
-void VTKGeoMesh::PrintCMeshVTK(CompMesh *cmesh, int dim, const std::string &filename)
+void VTKGeoMesh::PrintCMeshVTK(CompMesh *cmesh, int dim, const std::string &filename) // modify bool Alldim (?)
 {
     std::ofstream file(filename);
     file.clear();

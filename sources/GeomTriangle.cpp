@@ -65,14 +65,19 @@ void GeomTriangle::X(const VecDouble &xi, MatrixDouble &NodeCo, VecDouble &x) {
     if(x.size() < NodeCo.rows()) DebugStop();
     if(NodeCo.cols() != nCorners) DebugStop();
     
-    VecDouble phi;
-    MatrixDouble dphi;
+    VecDouble phi(nCorners);
+    MatrixDouble dphi(Dimension,nCorners);
     //x.resize(nrow);       //uncomment this line to pass TestGeom 
     //x.setZero();          //uncomment this line to pass TestGeom 
+    if (x.size() < nrow){
+        x.resize(nrow);
+    }
+    x.setZero();
+
     Shape(xi, phi, dphi);
 
 // This part of the code follows the same logic from GeomTetrahedron lines
-    for (int i = 0; i < nrow; i++) {
+    for (int i = 0; i < Dimension; i++) {
         for (int j = 0; j < nCorners; j++) {
             x[i] += phi[j] * NodeCo(i, j);
         }

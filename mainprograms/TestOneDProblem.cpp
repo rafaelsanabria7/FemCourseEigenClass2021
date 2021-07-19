@@ -35,18 +35,17 @@ using std::endl;
 using std::cin;
 
 void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv);
-
 int main ()
 {
     GeoMesh gmesh;
     ReadGmsh read;
-    std::string filename("oneD.msh");
-#ifdef MACOSX
-    filename = "../"+filename;
-#endif
-    read.Read(gmesh,"oneD.msh");
+//    std::string filename("OneDmesh_05.msh");
+//    #ifdef MACOSX
+//    filename = "../"+filename;
+//    #endif
+    read.Read(gmesh,"OneDmesh_05.msh");
     VTKGeoMesh plotmesh;
-    plotmesh.PrintGMeshVTK(&gmesh, "oneD.vtk");
+    plotmesh.PrintGMeshVTK(&gmesh, "OneDmesh_05.vtk");
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
     perm.setZero();
@@ -55,10 +54,9 @@ int main ()
     perm(2,2) = 1.;
     Poisson *mat1 = new Poisson(1,perm);
     mat1->SetDimension(1);
-    
     auto force = [](const VecDouble &x, VecDouble &res)
     {
-        res[0] = 1.;
+        res[0] = x[0];
     };
     mat1->SetForceFunction(force);
     MatrixDouble proj(1,1),val1(1,1),val2(1,1);
@@ -67,9 +65,9 @@ int main ()
     val2.setZero();
     L2Projection *bc_linha = new L2Projection(0,2,proj,val1,val2);
     L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
-    std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
+    std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha,};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(1);
+    cmesh.SetDefaultOrder(2);
     cmesh.AutoBuild();
     cmesh.Resequence();
 
@@ -79,30 +77,30 @@ int main ()
     PostProcessTemplate<Poisson> postprocess;
   
     postprocess.AppendVariable("Sol");
-    postprocess.AppendVariable("DSol");
-    postprocess.AppendVariable("Flux");
-    postprocess.AppendVariable("Force");
-    postprocess.AppendVariable("SolExact");
-    postprocess.AppendVariable("DSolExact");
+    //postprocess.AppendVariable("DSol");
+    //postprocess.AppendVariable("Flux");
+    //postprocess.AppendVariable("Force");
+    //postprocess.AppendVariable("SolExact");
+    //postprocess.AppendVariable("DSolExact");
     
     postprocess.SetExact(exact);
     mat1->SetExactSolution(exact);
-//  Analysis.PostProcessSolution("quads.vtk",postprocess);
+    //Analysis.PostProcessSolution("c_one.vtk",postprocess);
+    plotmesh.PrintCMeshVTK(&cmesh,1, "c_OneDmesh_05.vtk");
 
     VecDouble errvec;
     errvec = Analysis.PostProcessError(std::cout, postprocess);
 
-    cmesh.Solution() (0,0) = 1.;
-    CompElement* cel = cmesh.GetElement(0);
-    plotmesh.PrintCMeshVTK(&cmesh,2, "c_oneD.vtk");
-    
     return 0;
 }
 void exact(const VecDouble &point,VecDouble &val, MatrixDouble &deriv){
 
-    deriv(0,0) = 4 - point[0];
-    val[0] = point[0]*(8.+ point[0])/2.;
+    val[0] = point[0]*(1 - point[0]*point[0])/6.;
+    deriv(0,0) = (1 - 3.*point[0]*point[0])/6.;
     return;
+
+   //val[0] = -point[0]*(point[0]*point[0] - 64.)/6.;
+   //deriv(0,0) = -point[0]*point[0]/3. + 1/6.*(64 - point[0]*point[0]);
 
    // double E = exp(1.0);
    // VecDouble x(1);

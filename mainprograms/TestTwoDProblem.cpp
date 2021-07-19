@@ -17,17 +17,27 @@
 //
 #include <iostream>
 #include <math.h>
-#include "GeoMesh.h"
+#include "IntRule.h"
+#include "IntRule1d.h"
+#include "IntRuleQuad.h"
+#include "IntRuleTetrahedron.h"
+#include "IntRuleTriangle.h"
+#include "Topology1d.h"
+#include "TopologyTriangle.h"
+#include "TopologyQuad.h"
+#include "TopologyTetrahedron.h"
+#include "DataTypes.h"
+#include "Analysis.h"
+#include "VTKGeoMesh.h"
 #include "ReadGmsh.h"
 #include "CompMesh.h"
-#include "GeoElement.h"
-#include "GeoElementTemplate.h"
-#include "MathStatement.h"
-#include "L2Projection.h"
-#include "Analysis.h"
-#include "IntRule.h"
-#include "PostProcessTemplate.h"
 #include "Poisson.h"
+#include "L2Projection.h"   
+#include "CompElement.h"
+#include "GeoElement.h"
+#include "Assemble.h"
+#include "PostProcessTemplate.h"
+#include "PostProcess.h"
 
 using std::cout;
 using std::endl;
@@ -39,12 +49,9 @@ int main ()
 {
     GeoMesh gmesh;
     ReadGmsh read;
-    std::string filename("quads.msh");
-#ifdef MACOSX
-    filename = "../"+filename;
-#endif
-    read.Read(gmesh,"quads.msh");
-
+    read.Read(gmesh,"TwoDmesh_triangle_05_u.msh");
+    VTKGeoMesh plotmesh;
+    plotmesh.PrintGMeshVTK(&gmesh, "TwoDmesh_triangle_05_u.vtk");
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
     perm.setZero();
@@ -53,10 +60,18 @@ int main ()
     perm(2,2) = 1.;
     Poisson *mat1 = new Poisson(1,perm);
     mat1->SetDimension(2);
-    
+
     auto force = [](const VecDouble &x, VecDouble &res)
     {
-        res[0] = 2.*(1.-x[0])*x[0] + 2.*(1.-x[1])*x[1];
+        //res[0] = 33*exp(-x[1])*cos(3.*x[1])*sin(5*x[0])-6*exp(-x[1])*sin(5.*x[0])*sin(3*x[1]);
+        res[0] = (-10*(-1 + 2*x[0])*(-1 + x[1])*x[1]*cos(5*x[0])*cos(3*x[1]) + sin(5*x[0])*((-1 + x[1])*(-2*x[1] - x[0]*(4 + 33*x[1]) + x[0]*x[0]*(4 + 33*x[1]))*cos(3*x[1]) - 6*(-1 + x[0])*x[0]*(1 - 3*x[1] + x[1]*x[1])*sin(3*x[1])))/exp(x[1]);
+    };
+    auto exact = [](const VecDouble &x, VecDouble &Sol, MatrixDouble &DSol)
+    {
+        //Sol[0] = sin(5*x[0])*exp(-x[1])*cos(3*x[1]);
+        Sol[0] = sin(5*x[0])*exp(-x[1])*cos(3*x[1])*(x[0]*(1-x[0])*x[1]*(1-x[1]));
+        DSol(0,0) = exp(-x[1])*(-1 + x[1])*x[1]*cos(3*x[1])*(5*(-1 + x[0])*x[0]*cos(5*x[0]) + (-1 + 2*x[0])*sin(5*x[0]));
+        DSol(1,0) = -exp(-x[1])*(((-1 + x[0])*x[0]*sin(5*x[0])*((1 - 3*x[1] + x[1]*x[1])*cos(3*x[1]) + 3*(-1 + x[1])*x[1]*sin(3*x[1]))));
     };
     mat1->SetForceFunction(force);
     MatrixDouble proj(1,1),val1(1,1),val2(1,1);
@@ -64,24 +79,20 @@ int main ()
     val1.setZero();
     val2.setZero();
     L2Projection *bc_linha = new L2Projection(0,2,proj,val1,val2);
-    L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
-    std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
+    //L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
+    //bc_linha ->SetExactSolution(exact);
+    //bc_point ->SetExactSolution(exact);
+    mat1 ->SetExactSolution(exact);
+    std::vector<MathStatement *> mathvec = {0,mat1,bc_linha}; //Verify the order of mathvec
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(1);
+    cmesh.SetDefaultOrder(2);
     cmesh.AutoBuild();
-    cmesh.Resequence();
+    cmesh.Resequence(); 
 
     Analysis Analysis(&cmesh);
     Analysis.RunSimulation();
     PostProcessTemplate<Poisson> postprocess;
-    
-    auto exact = [](const VecDouble &x,VecDouble &val, MatrixDouble &deriv)
-    {
-        val[0] = (1.-x[0])*x[0]*(1.-x[1])*x[1];
-        deriv(0,0) = (1.-2*x[0])*(1.-x[1])*x[1];
-        deriv(1,0) = (1.-2*x[1])*(1.-x[0])*x[0];  
-    };
-    //postprocess.SetExact(exact);
+
     postprocess.AppendVariable("Sol");
     postprocess.AppendVariable("DSol");
     postprocess.AppendVariable("Flux");
@@ -90,13 +101,15 @@ int main ()
     postprocess.AppendVariable("DSolExact");
     
     postprocess.SetExact(exact);
-    mat1->SetExactSolution(exact);
+    //mat1->SetExactSolution(exact);
     //Analysis.PostProcessSolution("c_quads.vtk",postprocess);
+    plotmesh.PrintCMeshVTK(&cmesh,2,"c_TwoDmesh_triangle_05_u.vtk");
 
     VecDouble errvec;
     errvec = Analysis.PostProcessError(std::cout,postprocess);
 
     return 0;
 }
+
 
 

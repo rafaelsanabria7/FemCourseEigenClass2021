@@ -193,12 +193,13 @@ void CompElement::CalcStiff(MatrixDouble &ek, MatrixDouble &ef) const {
     for (int p = 0; p < NPoints; p++){
         quadratura->Point(p, data.ksi, data.weight);
         this->ComputeRequiredData(data, data.ksi);
-        weight *= fabs(data.detjac);
+        weight = data.weight*fabs(data.detjac);    //Modification suggested by Pedro
+        //weight *= fabs(data.detjac);
         material->Contribute(data, weight, ek, ef); 
 
     }
     
-    std::cout << '\n' << ek << std::endl; 
+    //std::cout << '\n' << ek << std::endl; 
     std::cout << '\n' << ef << std::endl; 
     
     //+++++++++++++++++

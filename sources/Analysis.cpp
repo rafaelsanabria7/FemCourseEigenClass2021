@@ -69,8 +69,10 @@ void Analysis::RunSimulation() {
     RightHandSide = F;
 
     std::cout << "Computing solution..." << std::endl;
-    Solution = K.fullPivLu().solve(F);
-//    K.Solve_LU(F);
+    //Solution = K.fullPivLu().solve(F);
+    //Solution =  K.Solve_LU(F);
+      Solution = K.ldlt().solve(F);
+
     std::cout << "Solution computed!" << std::endl;
     
     int solsize = Solution.rows();

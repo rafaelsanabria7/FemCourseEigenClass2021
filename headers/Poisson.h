@@ -80,9 +80,9 @@ public:
     
     virtual int NEvalErrors() const;
     
-    int Dimension() const {
-         return 1;
-    }
+   //int Dimension() const {
+   //      return 2;
+   // }
     
     
     virtual int VariableIndex(const PostProcVar var) const;

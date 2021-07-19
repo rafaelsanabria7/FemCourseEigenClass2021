@@ -28,11 +28,11 @@ using std::endl;
 using std::cin;
 
 
-//void force(const VecDouble &co, VecDouble &result)
-//{
-//    result.resize(1);
-//    result[0] = 1.;
-//}
+void force(const VecDouble &x, VecDouble &res)
+{
+    res.resize(1);
+    res[0] = 1;
+}
 
 int main (){  
     GeoMesh gmesh;
@@ -44,7 +44,7 @@ int main (){
     MatrixDouble perm(3,3);
     perm.setZero();
     perm.setIdentity();
-    Poisson *mat1 = new Poisson(3, perm);
+    Poisson *mat1 = new Poisson(1, perm);
     MatrixDouble proj(1,1), val1(1,1), val2(1,1); 
     proj.setZero();
     val1.setZero();
@@ -94,9 +94,6 @@ for(auto cel:cmesh.GetElementVec())
     CompElement* cel = cmesh.GetElement(0);
     plotmesh.PrintCMeshVTK(&cmesh,2, "c_triangle.vtk");
     
-
-
-
     //  Analysis Analysis(&cmesh);
     //  Analysis.RunSimulation();
 

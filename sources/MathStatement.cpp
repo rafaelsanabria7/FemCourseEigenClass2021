@@ -9,14 +9,18 @@
 double MathStatement::gBigNumber = 1.e12;
 
 MathStatement::MathStatement() : MathDim(0) {
+    matid = 1;
+    MathDim = 1;
 }
 
 MathStatement::MathStatement(const MathStatement &copy) {
     matid = copy.matid;
+    MathDim = copy.MathDim;
 }
 
 MathStatement &MathStatement::operator=(const MathStatement &copy) {
     matid = copy.matid;
+    MathDim = copy.MathDim;
     return *this;
 }
 

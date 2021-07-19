@@ -138,31 +138,38 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
     int dim = dphi.rows();
 
     MatrixDouble perm(3, 3);
-    std::function<void(const VecDouble &co, VecDouble & result) > force;
+    //std::function<void(const VecDouble &co, VecDouble & result) > force;
 
     perm = this->GetPermeability();
     
-    //  VecDouble res(nstate);
+    //VecDouble res(nstate);
     double res = 0.;
-    force = this->GetForceFunction();
-    if(force)
-    {
-        VecDouble resloc(1);
-        force(data.x, resloc);
-        res = resloc[0];
-    }
-    else 
-    {
+    auto force = this->GetForceFunction();
+    VecDouble resloc(1);
+    force(data.x, resloc);
+    res = resloc[0];
+   
+   // if(force)
+   // {
+   //     VecDouble resloc(1);
+   //     force(data.x, resloc);
+   //     res = resloc[0];
+   // }
+   // else 
+   // {
         //DebugStop();
-    }
+   //}
+    
+    //std::cout << "perm\n" << perm << std::endl; 
+    //std::cout << "res\n" << res << std::endl; 
     // computing load vector (contribution from integration point)
     //EF += phi*(res*weight);
     //EK += dphi3*perm*(dphi2*weight);
 
-        // computing load vector (contribution from integration point)
+    // computing load vector (contribution from integration point)
     for(int i =0; i < nshape * nstate; i++)
     {
-        EF(i,0) += res * data.weight* data.phi[i];
+        EF(i,0) += weight*data.phi[i]*res;
     }
     // computing element stiffness matrix (contribution from integration point)
     for(int i =0; i < nshape * nstate; i++)
@@ -174,11 +181,12 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
         flux = perm * gradphii;
         for(int j =0; j < nshape * nstate; j++)
         {
-            MatrixDouble gradphij = dphi2.col(j);
+           MatrixDouble gradphij = dphi2.col(j);
             // variational formulation for Poisson problem
-            EK(i,j) += data.weight * Inner (flux,gradphij) * data.detjac; 
+            EK(i,j) += weight * Inner (flux,gradphij); 
         }
     }
+
     //+++++++++++++++++
     // Please implement me
     //std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
@@ -263,7 +271,7 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
             //+++++++++++++++++
             // Please implement me
             std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            //return;
+            return;
             DebugStop();
             //+++++++++++++++++
         }
@@ -273,7 +281,7 @@ void Poisson::PostProcessSolution(const IntPointData &data, const int var, VecDo
             //+++++++++++++++++
             // Please implement me
             std::cout << "\nPLEASE IMPLEMENT ME\n" << __PRETTY_FUNCTION__ << std::endl;
-            //return;
+            return;
             DebugStop();
             //+++++++++++++++++
         }
