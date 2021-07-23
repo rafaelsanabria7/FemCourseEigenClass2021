@@ -39,7 +39,7 @@ int main ()
 {
     GeoMesh gmesh;
     ReadGmsh read;
-//    std::string filename("OneDmesh_05.msh");
+    std::string filename("OneDmesh_05.msh");
 //    #ifdef MACOSX
 //    filename = "../"+filename;
 //    #endif
@@ -77,15 +77,16 @@ int main ()
     PostProcessTemplate<Poisson> postprocess;
   
     postprocess.AppendVariable("Sol");
-    //postprocess.AppendVariable("DSol");
-    //postprocess.AppendVariable("Flux");
-    //postprocess.AppendVariable("Force");
-    //postprocess.AppendVariable("SolExact");
-    //postprocess.AppendVariable("DSolExact");
+    postprocess.AppendVariable("DSol");
+    postprocess.AppendVariable("Flux");
+    postprocess.AppendVariable("Force");
+    postprocess.AppendVariable("SolExact");
+    postprocess.AppendVariable("DSolExact");
     
     postprocess.SetExact(exact);
     mat1->SetExactSolution(exact);
-    //Analysis.PostProcessSolution("c_one.vtk",postprocess);
+    
+    //Analysis.PostProcessSolution("cnew_one.vtk",postprocess);
     plotmesh.PrintCMeshVTK(&cmesh,1, "c_OneDmesh_05.vtk");
 
     VecDouble errvec;

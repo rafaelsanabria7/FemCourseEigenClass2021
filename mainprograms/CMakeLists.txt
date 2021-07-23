@@ -40,8 +40,8 @@ target_link_libraries (TestOneDProblem  course_library Eigen3::Eigen)
 add_executable(TestTwoDProblem TestTwoDProblem.cpp)
 target_link_libraries (TestTwoDProblem course_library Eigen3::Eigen)
 
-add_executable(PostProcess mainPostProcess.cpp ${SOURCES})
-target_link_libraries (PostProcess course_library Eigen3::Eigen)
+#add_executable(PostProcess mainPostProcess.cpp ${SOURCES})
+#target_link_libraries (PostProcess course_library Eigen3::Eigen)
 
 add_executable(TestThreeDProblem TestThreeDProblem.cpp)
 target_link_libraries (TestThreeDProblem course_library Eigen3::Eigen)

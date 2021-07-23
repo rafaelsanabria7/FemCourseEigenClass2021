@@ -102,8 +102,8 @@ int main ()
     
     postprocess.SetExact(exact);
     //mat1->SetExactSolution(exact);
-    //Analysis.PostProcessSolution("c_quads.vtk",postprocess);
-    plotmesh.PrintCMeshVTK(&cmesh,2,"c_TwoDmesh_triangle_05_u.vtk");
+    Analysis.PostProcessSolution("cnew_quads.vtk",postprocess);
+    //plotmesh.PrintCMeshVTK(&cmesh,2,"c_TwoDmesh_triangle_05_u.vtk");
 
     VecDouble errvec;
     errvec = Analysis.PostProcessError(std::cout,postprocess);

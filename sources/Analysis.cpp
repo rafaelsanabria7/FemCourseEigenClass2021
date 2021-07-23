@@ -71,7 +71,7 @@ void Analysis::RunSimulation() {
     std::cout << "Computing solution..." << std::endl;
     //Solution = K.fullPivLu().solve(F);
     //Solution =  K.Solve_LU(F);
-      Solution = K.ldlt().solve(F);
+    Solution = K.ldlt().solve(F);
 
     std::cout << "Solution computed!" << std::endl;
     

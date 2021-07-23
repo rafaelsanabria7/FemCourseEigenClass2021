@@ -35,7 +35,7 @@ int main ()
 #ifdef MACOSX
     filename = "../"+filename;
 #endif
-    read.Read(gmesh,filename);
+    read.Read(gmesh,"cube3D.msh");
 
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
@@ -63,7 +63,7 @@ int main ()
     L2Projection *bc_point = new L2Projection(0,3,proj,val1,val2);
     std::vector<MathStatement *> mathvec = {0,mat1,bc_point,bc_linha};
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(2);
+    cmesh.SetDefaultOrder(1);
     cmesh.AutoBuild();
     cmesh.Resequence();
 

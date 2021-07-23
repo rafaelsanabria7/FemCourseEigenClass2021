@@ -462,7 +462,6 @@ void VTKGeoMesh::PrintSolVTK(CompMesh *cmesh, PostProcess &defPostProc, const st
         
     }
     
-    
     int nvecvar = defPostProc.NumVectorVariables();
     std::vector<std::stringstream> solution(nvecvar);
     
