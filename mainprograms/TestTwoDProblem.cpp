@@ -49,9 +49,9 @@ int main ()
 {
     GeoMesh gmesh;
     ReadGmsh read;
-    read.Read(gmesh,"TwoDmesh_triangle_05_u.msh");
+    read.Read(gmesh,"TwoDmesh_quad_01.msh");
     VTKGeoMesh plotmesh;
-    plotmesh.PrintGMeshVTK(&gmesh, "TwoDmesh_triangle_05_u.vtk");
+    plotmesh.PrintGMeshVTK(&gmesh, "TwoDmesh_quad_01.vtk");
     CompMesh cmesh(&gmesh);
     MatrixDouble perm(3,3);
     perm.setZero();
@@ -85,7 +85,7 @@ int main ()
     mat1 ->SetExactSolution(exact);
     std::vector<MathStatement *> mathvec = {0,mat1,bc_linha}; //Verify the order of mathvec
     cmesh.SetMathVec(mathvec);
-    cmesh.SetDefaultOrder(2);
+    cmesh.SetDefaultOrder(1);
     cmesh.AutoBuild();
     cmesh.Resequence(); 
 
@@ -102,8 +102,9 @@ int main ()
     
     postprocess.SetExact(exact);
     //mat1->SetExactSolution(exact);
-    Analysis.PostProcessSolution("cnew_quads.vtk",postprocess);
     //plotmesh.PrintCMeshVTK(&cmesh,2,"c_TwoDmesh_triangle_05_u.vtk");
+    Analysis.PostProcessSolution("c_TwoDmesh_quad_01.vtk",postprocess);
+    
 
     VecDouble errvec;
     errvec = Analysis.PostProcessError(std::cout,postprocess);

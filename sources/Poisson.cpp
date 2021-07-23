@@ -155,7 +155,7 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
     //std::cout << "res\n" << res << std::endl; 
     // computing load vector (contribution from integration point)
     //EF += phi*(res*weight);
-    //EK += dphi3*perm*(dphi2*weight);
+    //EK += (dphi3*perm*dphi2 + phi*phi.transpose())*weight;
 
     // computing load vector (contribution from integration point)
     for(int i =0; i < nshape * nstate; i++)
@@ -172,7 +172,7 @@ void Poisson::Contribute(IntPointData &data, double weight, MatrixDouble &EK, Ma
         flux = perm * gradphii;
         for(int j =0; j < nshape * nstate; j++)
         {
-           MatrixDouble gradphij = dphi2.col(j);
+          MatrixDouble gradphij = dphi2.col(j);
             // variational formulation for Poisson problem
             EK(i,j) += weight * Inner (flux,gradphij); 
         }
